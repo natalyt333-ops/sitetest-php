@@ -750,7 +750,7 @@ print_r ($result);
 // Напишите функцию `deduplicateContacts($contacts)`, которая находит дубликаты по email и объединяет их: 
 // берёт данные из более «полного» контакта (где больше заполненных полей). Возвращает массив уникальных контактов.
 //  Выведите количество до и после дедупликации.
-
+/*
     $contacts = [ 
         ['name'=>'Светлана', 'email'=>'svet@mail.ru', 'phone'=>'+79654547878', 'company'=>'Ромашка'],
         ['name'=>'Николай', 'email'=>'nik@mail.ru', 'phone'=>'+79648956455', 'company'=>'Василек'],
@@ -786,7 +786,87 @@ echo count ($contacts);
             }
 
         $contacts = deduplicateContacts($contacts);
-        /*
+     
         print_r ($contacts);
 */
+
+//19. Напишите функцию `buildPipelineReport($deals, $stages)`,
+//  где `$deals` — массив сделок (`id`, `title`, `amount`, `stage_id`),
+//  а `$stages` — массив этапов воронки (`id`, `name`, `is_success`).
+//  Функция формирует отчёт: для каждого этапа — количество сделок, общая сумма, 
+// процент от общей суммы всех сделок. Дополнительно — этап с максимальной суммой и этап с максимальным количеством. 
+// Возвращает ассоциативный массив отчёта.
+
+    $deals = [
+    ['id' => 28,  'title' => 'Продажа монитора',      'amount' => 15000,  'stage_id' => 28],
+    ['id' => 15,  'title' => 'Продажа ноутбука',      'amount' => 85000,  'stage_id' => 15],
+    ['id' => 33,  'title' => 'Разработка сайта',      'amount' => 120000, 'stage_id' => 33],
+    ['id' => 115, 'title' => 'Продажа принтера',      'amount' => 24000,  'stage_id' => 115],
+    ['id' => 49,  'title' => 'Настройка сети',        'amount' => 45000,  'stage_id' => 33],
+
+    ['id' => 101, 'title' => 'Продажа клавиатуры',    'amount' => 5000,   'stage_id' => 28],
+    ['id' => 102, 'title' => 'Продажа мыши',          'amount' => 3000,   'stage_id' => 115],
+    ['id' => 103, 'title' => 'Продажа планшета',      'amount' => 35000,  'stage_id' => 28],
+
+    ['id' => 104, 'title' => 'Продажа сервера',       'amount' => 210000, 'stage_id' => 15],
+    ['id' => 105, 'title' => 'Установка программы',   'amount' => 12000,  'stage_id' => 15],
+    ['id' => 106, 'title' => 'Продажа роутера',       'amount' => 9000,   'stage_id' => 15],
+
+    ['id' => 107, 'title' => 'Разработка приложения', 'amount' => 180000, 'stage_id' => 33],
+    ['id' => 108, 'title' => 'Дизайн логотипа',       'amount' => 25000,  'stage_id' => 33],
+    ['id' => 109, 'title' => 'Создание лендинга',     'amount' => 70000,  'stage_id' => 33],
+
+    ['id' => 110, 'title' => 'Продажа компьютера',    'amount' => 95000,  'stage_id' => 115],
+    ['id' => 111, 'title' => 'Обслуживание техники',  'amount' => 30000,  'stage_id' => 115],
+    ['id' => 112, 'title' => 'Продажа проектора',     'amount' => 65000,  'stage_id' => 115],
+
+    ['id' => 113, 'title' => 'Продажа сканера',       'amount' => 18000,  'stage_id' => 49],
+    ['id' => 114, 'title' => 'Настройка почты',       'amount' => 8000,   'stage_id' => 49],
+    ['id' => 116, 'title' => 'Разработка каталога',   'amount' => 55000,  'stage_id' => 49]
+
+];
+$stages = [
+    ['id' => 28,  'name' => 'Новая',            'is_succes' => false],
+    ['id' => 15,  'name' => 'Переговоры',       'is_succes' => false],
+    ['id' => 33,  'name' => 'Отправлено КП',    'is_succes' => false],
+    ['id' => 115, 'name' => 'Успешно закрыта', 'is_succes' => true],
+    ['id' => 49,  'name' => 'Отказ',            'is_succes' => false]
+];
+
+function buildPipelineReport($deals, $stages){
+    $stage_total = [];
+    $sumamount = 0;
+
+    foreach ($deals as $deal){
+        $sumamount +=$deal['amount'];
+    }
+    
+    foreach ($deals as $deal) {
+        foreach ($stages as $stage){
+            if ($deal['stage_id'] === $stage['id']){
+            $stageId = $stage['id'];
+
+              if (!isset($stage_total[$stageId])){
+                $stage_total[$stageID] = [
+                    'name'=> $stage['name'],
+                    'count'=> 0,
+                    'amount'=> 0,
+                    'persent'=>0
+                ];
+              }
+            $stage_total[$stageId]['name'] = $stage ['name']; 
+            $stage_total[$stageId]['count'] ++;
+            $stage_total[$stageId]['amount'] += $deal['amount'];
+            break;
+            }
+            
+        }
+    }
+    foreach ($stage_total as $stageId => $value) {
+        $stage_total[$stageId]['persent'] = round ($value['amount']/$sumamount * 100, 2); // этап с макс суммой и макс кол-вом еще сделать
+    }
+    return $stage_total;
+}
+$stage_total = buildPipelineReport($deals, $stages);
+print_r ($stage_total);
 ?>
